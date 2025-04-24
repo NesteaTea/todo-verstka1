@@ -69,10 +69,10 @@ export default class TodoApp extends Component {
 
     const currentTodo = newTodo[this.state.todos.findIndex((todo) => todo.id === id)]
 
-    if(!currentTodo.flag) {
+    if(!currentTodo.completed) {
       currentTodo.interval = setInterval(() => this.reduceTimer(id), 1000);
       currentTodo.flag = true
-    }
+    } 
 
     this.setState({ todos: newTodo });
   };

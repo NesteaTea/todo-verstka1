@@ -40,8 +40,14 @@ export default class Task extends Component {
       totalTime
     } = this.props;
 
-    const minutes = Math.trunc(totalTime / 60)
-    const seconds = totalTime % 60
+    const minutes = Math.trunc(totalTime / 60)  
+    let seconds = totalTime % 60
+
+    if(seconds < 10) {
+      seconds = `0${seconds}`
+    } else {
+      seconds = totalTime % 60
+    }
 
     return (
       <div className="view">
