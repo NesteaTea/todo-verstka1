@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import "./TasksFilter.css";
-import PropTypes from 'prop-types';
 
-export default class TasksFilter extends Component {
-  buttonsData = [
+export default function TasksFilter({ onFilterChange, filter }) {
+  const buttonsData = [
     {
       name: "all",
       label: "All",
@@ -18,14 +17,13 @@ export default class TasksFilter extends Component {
     },
   ];
 
-  render() {
-    const buttons = this.buttonsData.map(({ name, label }) => {
-      const clazz = this.props.filter === name ? "selected" : null;
+    const buttons = buttonsData.map(({ name, label }) => {
+      const clazz = filter === name ? "selected" : null;
       return (
         <li key={name}>
           <button
             className={clazz}
-            onClick={() => this.props.onFilterChange(name)}>
+            onClick={() => onFilterChange(name)}>
             {label}
           </button>
         </li>
@@ -33,9 +31,3 @@ export default class TasksFilter extends Component {
     });
     return <ul className="filters">{buttons}</ul>;
   }
-}
-
-TasksFilter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  onFilterChange: PropTypes.func
-}

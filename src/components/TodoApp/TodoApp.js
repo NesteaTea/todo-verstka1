@@ -1,139 +1,133 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import NewTaskForm from "../NewTaskForm/NewTaskForm";
 import TaskList from "../TaskList/TaskList";
 import Footer from "../Footer/Footer";
 import "./TodoApp.css";
 
-export default class TodoApp extends Component {
-  state = {
-    todos: [],
-    nextId: 1,
-    filter: 'all'
-  };
+export default function TodoApp() {
+  const [todos, setTodos] = useState([])
+  const [nextId, setNestId] = useState(1)
+  const [filter, setFilter] = useState('all')
 
-  toggleCompleted = (id) => {
-    const newTodo = this.state.todos.map((todo) =>
+  const toggleCompleted = (id) => {
+    const newTodo = todos.map((todo) =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
-    this.endTimer(id)
+    endTimer(id)
 
-    this.setState({ todos: newTodo });
+    setTodos(newTodo);
   };
 
-  deleteTask = (id) => {
-    const deleteTask = this.state.todos.filter((todo) => todo.id !== id);
-    this.endTimer(id)
-    this.setState({ todos: deleteTask });
+  const deleteTask = (id) => {
+    const deleteTask = todos.filter((todo) => todo.id !== id);
+    endTimer(id)
+    setTodos(deleteTask);
   };
 
-  editTask = (id) => {
-    const newTodo = [...this.state.todos];
+  const editTask = (id) => {
+    const newTodo = [...todos];
     newTodo[
-      this.state.todos.findIndex((todo) => todo.id === id)
+      todos.findIndex((todo) => todo.id === id)
     ].onEditing = true;
-    this.setState({ todos: newTodo });
+    setTodos(newTodo);
   };
 
-  closeEdit = (id) => {
-    const newTodo = [...this.state.todos];
+  const closeEdit = (id) => {
+    const newTodo = [...todos];
     newTodo[
-      this.state.todos.findIndex((todo) => todo.id === id)
+      todos.findIndex((todo) => todo.id === id)
     ].onEditing = false;
-    this.setState({ todos: newTodo });
+    setTodos(newTodo);
   };
 
-  editDescription = (id, desc) => {
-    const newTodo = [...this.state.todos];
+  const editDescription = (id, desc) => {
+    const newTodo = [...todos];
 
-    newTodo[this.state.todos.findIndex((todo) => todo.id === id)].description =
+    newTodo[todos.findIndex((todo) => todo.id === id)].description =
       desc;
-    this.setState({ todos: newTodo });
+    setTodos(newTodo);
   };
 
-  reduceTimer = (id) => {
-    const newTodo = [...this.state.todos];
+  const reduceTimer = (id) => {
+    const newTodo = [...todos];
 
-    const currentTodo = newTodo[this.state.todos.findIndex((todo) => todo.id === id)]
+    const currentTodo = newTodo[todos.findIndex((todo) => todo.id === id)]
 
-    if(currentTodo.totalTime) {
+    if (currentTodo.totalTime) {
       currentTodo.totalTime = currentTodo.totalTime - 1
     } else {
       clearInterval(currentTodo.interval)
     }
 
-    this.setState({ todos: newTodo });
+    setTodos(newTodo);
   }
 
-  startTimer = (id) => {
-    const newTodo = [...this.state.todos];
+  const startTimer = (id) => {
+    const newTodo = [...todos];
 
-    const currentTodo = newTodo[this.state.todos.findIndex((todo) => todo.id === id)]
+    const currentTodo = newTodo[todos.findIndex((todo) => todo.id === id)]
 
-    if(!currentTodo.completed) {
-      currentTodo.interval = setInterval(() => this.reduceTimer(id), 1000);
+    if (!currentTodo.completed) {
+      currentTodo.interval = setInterval(() => reduceTimer(id), 1000);
       currentTodo.flag = true
-    } 
+    }
 
-    this.setState({ todos: newTodo });
+    setTodos(newTodo);
   };
 
-  endTimer = (id) => {
-    const newTodo = [...this.state.todos];
+  const endTimer = (id) => {
+    const newTodo = [...todos];
 
-    const currentTodo = newTodo[this.state.todos.findIndex((todo) => todo.id === id)]
+    const currentTodo = newTodo[todos.findIndex((todo) => todo.id === id)]
 
     clearInterval(currentTodo.interval);
     currentTodo.flag = false
 
-    this.setState({ todos: newTodo });
+    setTodos(newTodo);
   };
 
-  setTodos = (todos, newTodo) => {
-    this.setState({ todos: [...todos, newTodo] });
+  const newTask = (todos, newTodo) => {
+    setTodos([...todos, newTodo]);
   };
 
-  deleteAll = (newTodo) => {
-    this.setState({ todos: newTodo });
+  const deleteAll = (newTodo) => {
+    setTodos(newTodo);
   };
 
-  setNextId = (nextId) => {
-    this.setState({ nextId: nextId + 1 });
+  const setNextId = (nextId) => {
+    setNestId(nextId + 1);
   };
 
-  onFilterChange = (filter) => {
-    this.setState({ filter })
+  const onFilterChange = (filter) => {
+    setFilter(filter)
   }
+  const filteredTodo = filter === 'active' ? todos.filter((item) => !item.completed) : filter === 'completed' ? todos.filter((item) => item.completed) : todos
 
-  render() {
-    const { todos, nextId } = this.state;
-    const filteredTodo = this.state.filter === 'active' ? todos.filter((item) => !item.completed) : this.state.filter === 'completed' ? todos.filter((item) => item.completed) : todos
-
-    return (
-      <section className="todoapp">
-        <NewTaskForm
-          todos={filteredTodo}
-          setTodos={this.setTodos}
-          nextId={nextId}
-          setNextId={this.setNextId}
-        />
-        <TaskList
-          todos={filteredTodo}
-          onToggleCompleted={this.toggleCompleted}
-          onEdit={this.editTask}
-          onStartTimer={this.startTimer}
-          onEndTimer={this.endTimer}
-          onDelete={this.deleteTask}
-          onEditClose={this.closeEdit}
-          editDescription={this.editDescription}
-        />
-        <Footer
-          todos={filteredTodo}
-          setTodos={this.setTodos}
-          deleteAll={this.deleteAll}
-          onFilterChange={this.onFilterChange}
-          filter={this.state.filter}
-        />
-      </section>
-    );
-  }
+  return (
+    <section className="todoapp">
+      <NewTaskForm
+        todos={filteredTodo}
+        setTodos={newTask}
+        nextId={nextId}
+        setNextId={setNextId}
+      />
+      <TaskList
+        todos={filteredTodo}
+        onToggleCompleted={toggleCompleted}
+        onEdit={editTask}
+        onStartTimer={startTimer}
+        onEndTimer={endTimer}
+        onDelete={deleteTask}
+        onEditClose={closeEdit}
+        editDescription={editDescription}
+      />
+      <Footer
+        todos={filteredTodo}
+        setTodos={newTask}
+        deleteAll={deleteAll}
+        onFilterChange={onFilterChange}
+        filter={filter}
+      />
+    </section>
+  );
 }

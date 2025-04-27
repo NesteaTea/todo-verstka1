@@ -1,38 +1,30 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import "./NewTaskForm.css";
 
-export default class NewTaskForm extends Component {
-  state = {
-    newTaskDescription: "",
-    minutes: "",
-    seconds: ""
-  };
+export default function NewTaskForm({
+  todos, nextId, setTodos, setNextId
+}) {
+  const [newTaskDescription, setNewTaskDescription] = useState('')
+  const [minutes, setMinutes] = useState('')
+  const [seconds, setSeconds] = useState('')
 
-  onChangeMinutes = (e) => {
-    this.setState({
-      minutes: e.target.value
-    })
+  const onChangeMinutes = (e) => {
+    setMinutes(e.target.value)
   }
 
-  onChangeSeconds = (e) => {
-    if(e.target.value.length > 2 || Number(e.target.value) > 59){
-      this.setState({
-        seconds: ''
-    })} else {
-      this.setState({
-        seconds: e.target.value,
-      });
+  const onChangeSeconds = (e) => {
+    if (e.target.value.length > 2 || Number(e.target.value) > 59) {
+      setSeconds('')
+    } else {
+      setSeconds(e.target.value);
     }
   }
 
-  newTaskDescriptionText = (ev) => {
-    this.setState({ newTaskDescription: ev.target.value });
+  const newTaskDescriptionText = (ev) => {
+    setNewTaskDescription(ev.target.value);
   };
 
-  handleKeyDown = (event) => {
-    const { todos, nextId, setTodos, setNextId } = this.props;
-    const { newTaskDescription, minutes, seconds } = this.state;
+  const handleKeyDown = (event) => {
 
     if (event.key === "Enter") {
       if (newTaskDescription.trim() !== "") {
@@ -48,49 +40,28 @@ export default class NewTaskForm extends Component {
         };
         setTodos(todos, newTodo);
         setNextId(nextId);
-        this.setState({ 
-          newTaskDescription: "",
-          minutes: "",
-          seconds: ""
-        });
+        setNewTaskDescription('');
+        setMinutes('');
+        setSeconds('');
       }
     }
   };
 
-  render() {
-    return (
-      <header>
-        <h1>Todos</h1>
-        <form className="new-todo-form">
-          <input
-            className="new-todo"
-            placeholder="What needs to be done?"
-            type="text"
-            value={this.state.newTaskDescription}
-            onChange={this.newTaskDescriptionText}
-            onKeyDown={this.handleKeyDown}
-          />
-          <input className="new-todo-form__timer" placeholder="Min" value={this.state.minutes} onChange={this.onChangeMinutes} />
-          <input className="new-todo-form__timer" placeholder="Sec" value={this.state.seconds} onChange={this.onChangeSeconds} />
-        </form>
-      </header>
-    );
-  }
-}
-
-NewTaskForm.propTypes = {
-  todos: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      text: PropTypes.string.isRequired,
-      completed: PropTypes.bool.isRequired,
-      onEditing: PropTypes.bool.isRequired,
-      date: PropTypes.instanceOf(Date).isRequired,
-      minutes: PropTypes.number,
-      seconds: PropTypes.number
-    })
-  ),
-  nextId: PropTypes.number.isRequired,
-  setTodos: PropTypes.func,
-  setNextId: PropTypes.func
+  return (
+    <header>
+      <h1>Todos</h1>
+      <form className="new-todo-form">
+        <input
+          className="new-todo"
+          placeholder="What needs to be done?"
+          type="text"
+          value={newTaskDescription}
+          onChange={newTaskDescriptionText}
+          onKeyDown={handleKeyDown}
+        />
+        <input className="new-todo-form__timer" placeholder="Min" value={minutes} onChange={onChangeMinutes} />
+        <input className="new-todo-form__timer" placeholder="Sec" value={seconds} onChange={onChangeSeconds} />
+      </form>
+    </header>
+  );
 }
