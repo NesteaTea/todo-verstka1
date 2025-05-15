@@ -81,6 +81,7 @@ export default function TodoApp() {
     const currentTodo = newTodo[todos.findIndex((todo) => todo.id === id)]
 
     clearInterval(currentTodo.interval);
+    currentTodo.interval = null;
     currentTodo.flag = false
 
     setTodos(newTodo);
