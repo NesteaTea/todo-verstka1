@@ -67,7 +67,7 @@ export default function TodoApp() {
 
     const currentTodo = newTodo[todos.findIndex((todo) => todo.id === id)]
 
-    if (!currentTodo.completed) {
+    if (!currentTodo.completed && !currentTodo.interval) {
       currentTodo.interval = setInterval(() => reduceTimer(id), 1000);
       currentTodo.flag = true
     }
